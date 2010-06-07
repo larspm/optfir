@@ -4,14 +4,32 @@
 #include "filters.h"
 #include "optfir.h"
 
-int main()
+int main(int argc, char* argv[])
 {
-  FilterSpec spec = parseSpecFile("spec.xml");
+  if (argc != 2) {
+    std::cerr << "Usage: " << argv[0] << " filename\n";
+    return 1;
+  }
+  
+  FilterSpec spec;
+  try {
+     spec = parseSpecFile(argv[1]);
+  }
+  catch (std::exception& e) {
+    std::cerr << e.what() << std::endl;
+    return 1;
+  }
 
   std::cerr << "order = " << spec.order << std::endl;
   std::cerr << "symmetric = " << (spec.symmetric?"yes":"no") << std::endl;
   std::cerr << "max_coeff = " << spec.maxCoeffAbsValue << std::endl;
 
+  if(!spec.symmetric)
+  {
+    std::cerr << "Error: only symmetric filters are implemented, quitting \n";
+    return 1;
+  }
+  
   std::cerr << std::endl;
 
   for (SampleSpecMap::const_iterator it = spec.samples.begin();
@@ -38,14 +56,6 @@ int main()
 
   std::cout << "N = " << spec.order << std::endl;
 
-  std::cout << "h = [ ";
-  for (int i = 0; i < filter->getOrder(); i++)
-  {
-    std::cout << (*filter)[i] << " ";
-  }
-  std::cout << "]" << std::endl;
-
-
   std::cout << "w = [ ";
   for (SampleSpecMap::const_iterator it = spec.samples.begin();
        it != spec.samples.end();
@@ -55,7 +65,23 @@ int main()
   }
   std::cout << "]" << std::endl;
 
-  std::cout << "H = [ ";
+  std::cout << "H_opt = [ ";
+  for (SampleSpecMap::const_iterator it = spec.samples.begin();
+       it != spec.samples.end();
+       it++)
+  {
+    std::cout << it->second.gain << " ";
+  }
+  std::cout << "]" << std::endl;
+  
+  std::cout << "h_nlopt = [ ";
+  for (int i = 0; i < filter->getOrder(); i++)
+  {
+    std::cout << (*filter)[i] << " ";
+  }
+  std::cout << "]" << std::endl;
+
+  std::cout << "H_nlopt = [ ";
   for (SampleSpecMap::const_iterator it = spec.samples.begin();
        it != spec.samples.end();
        it++)
@@ -64,6 +90,14 @@ int main()
   }
   std::cout << "]" << std::endl;
 
+  std::cout <<
+  "A = [];\n"
+  "for j = 1:((N + 1) / 2 - 1 )\n"
+  "  A = [A 2*cos( ((N+1)/2 -j ) * w)];\n"
+  "endfor\n"
+  "A = [A ones(length(w), 1)];\n"
+  "h_pls = inv(A' * A) * A' * H_opt\n";
+  
   delete filter;
 
   return 0;

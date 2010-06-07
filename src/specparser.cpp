@@ -4,8 +4,9 @@
 #include <libxml/xpath.h>
 
 #include "specparser.h"
+#include "optfirexcept.h"
 
-xmlXPathObjectPtr getNodeSet (xmlDocPtr doc, xmlChar *xpath)
+xmlXPathObjectPtr getNodeSet(xmlDocPtr doc, xmlChar *xpath)
 {
   xmlXPathContextPtr context;
   xmlXPathObjectPtr result;
@@ -43,7 +44,7 @@ FilterSpec parseSpecFile(const char* filename)
 
   if (doc == NULL)
   {
-    throw 1;
+    throw OptfirException(std::string("Error: file ") + filename + " not found");
   }
 
   xmlXPathObjectPtr result = getNodeSet(doc, BAD_CAST "/amplitudespec");
@@ -102,6 +103,10 @@ FilterSpec parseSpecFile(const char* filename)
       }
      xmlXPathFreeObject(result);
     }
+  }
+  else
+  {
+    throw OptfirException(std::string("Error: file ") + filename + " not a valid specfile");
   }
 
   xmlFreeDoc(doc);
