@@ -10,7 +10,7 @@ int main(int argc, char* argv[])
     std::cerr << "Usage: " << argv[0] << " filename\n";
     return 1;
   }
-  
+
   FilterSpec spec;
   try {
      spec = parseSpecFile(argv[1]);
@@ -29,7 +29,7 @@ int main(int argc, char* argv[])
     std::cerr << "Error: only symmetric filters are implemented, quitting \n";
     return 1;
   }
-  
+
   std::cerr << std::endl;
 
   for (SampleSpecMap::const_iterator it = spec.samples.begin();
@@ -39,18 +39,30 @@ int main(int argc, char* argv[])
     std::cerr << "H("
               << it->first
               << ") = "
-              << it->second.gain
-              << " (weight = "
-              << it->second.weight
-              << ", max_deviation = "
-              << it->second.maxDeviation
+              << it->second
               << ")\n";
   }
 
-  FirFilter* filter = spec.symmetric ? (new SymmetricFirFilter(spec.order))
-                                     : (new FirFilter(spec.order));
+  FirFilter* filter = 0;
 
-  bool result = findClosestFilter(spec, *filter);
+  if (spec.symmetric)
+  {
+    if (spec.samples.count(0.0) > 0)
+    {
+      // TODO: this should be an option.
+      std::cerr << "Using forced DC response\n";
+      filter = new SymmetricFirFilterForcedDc(spec.samples[0.0], spec.order);
+    }
+    else
+    {
+      filter = new SymmetricFirFilter(spec.order);
+    }
+  }
+  else
+  {
+      filter = new FirFilter(spec.order);
+  }
+  bool result = findClosestFilter(spec, *filter, spec.samples.count(0.0) > 0);
 
   std::cerr << "\nResult(" << (result ? "ok" : "fail")  << "):\n\n";
 
@@ -63,23 +75,23 @@ int main(int argc, char* argv[])
   {
     std::cout << it->first << " ";
   }
-  std::cout << "]" << std::endl;
+  std::cout << "]'" << std::endl;
 
   std::cout << "H_opt = [ ";
   for (SampleSpecMap::const_iterator it = spec.samples.begin();
        it != spec.samples.end();
        it++)
   {
-    std::cout << it->second.gain << " ";
+    std::cout << it->second << " ";
   }
-  std::cout << "]" << std::endl;
-  
+  std::cout << "]'" << std::endl;
+
   std::cout << "h_nlopt = [ ";
-  for (int i = 0; i < filter->getOrder(); i++)
+  for (unsigned int i = 0; i < filter->getOrder(); i++)
   {
     std::cout << (*filter)[i] << " ";
   }
-  std::cout << "]" << std::endl;
+  std::cout << "]'" << std::endl;
 
   std::cout << "H_nlopt = [ ";
   for (SampleSpecMap::const_iterator it = spec.samples.begin();
@@ -88,7 +100,7 @@ int main(int argc, char* argv[])
   {
     std::cout << filter->getAmplitudeResponse(it->first) << " ";
   }
-  std::cout << "]" << std::endl;
+  std::cout << "]'" << std::endl;
 
   std::cout <<
   "A = [];\n"
@@ -97,7 +109,7 @@ int main(int argc, char* argv[])
   "endfor\n"
   "A = [A ones(length(w), 1)];\n"
   "h_pls = inv(A' * A) * A' * H_opt\n";
-  
+
   delete filter;
 
   return 0;

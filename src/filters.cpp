@@ -2,6 +2,7 @@
 #include <vector>
 #include <string>
 #include <complex>
+#include <numeric>
 
 #include "filters.h"
 
@@ -12,14 +13,14 @@ double signum(double x)
   return 0;
 }
 
-FirFilter::FirFilter(unsigned int N, double* coeffs)
+FirFilter::FirFilter(unsigned int N, const double* coeffs)
   : m_order(N)
   , m_rank(N)
   , m_h(m_rank, 0)
 {
   if (coeffs != 0)
   {
-    for (int i = 0; i < m_rank; i++)
+    for (unsigned int i = 0; i < m_rank; i++)
     {
       m_h[i] = coeffs[i];
     }
@@ -48,10 +49,19 @@ double& FirFilter::operator[](unsigned int i)
 
 void FirFilter::operator=(const double* h)
 {
-  for (int i = 0; i < m_rank; i++)
+  for (unsigned int i = 0; i < m_rank; i++)
   {
     m_h[i] = h[i];
   }
+}
+
+void FirFilter::operator=(const std::vector<double>& h)
+{
+  if (m_h.size() != h.size())
+  {
+    throw std::string("size mismatch");
+  }
+  m_h = h;
 }
 
 double FirFilter::getAmplitudeResponse(double w)
@@ -60,7 +70,7 @@ double FirFilter::getAmplitudeResponse(double w)
 
   const std::complex<double> i(0.0, 1.0);
 
-  for (int n = 0; n < m_order; n++)
+  for (unsigned int n = 0; n < m_order; n++)
   {
     res += operator[](n) * std::exp(-i * w * (double)(n));
   }
@@ -68,15 +78,8 @@ double FirFilter::getAmplitudeResponse(double w)
   return std::abs(res);
 }
 
-std::vector<double> FirFilter::getGradient(double w)
-{
-  std::vector<double> grad(m_rank, 0);
-  throw std::string("index too large");
-  return grad;
-}
-
-SymmetricFirFilter::SymmetricFirFilter(unsigned int N, double* coeffs)
-  : FirFilter(ceil((double)N/2), coeffs)
+SymmetricFirFilter::SymmetricFirFilter(unsigned int N, const double* coeffs)
+  : FirFilter((unsigned int)ceil((double)N/2), coeffs)
 {
   m_order = N;
 }
@@ -98,22 +101,36 @@ double& SymmetricFirFilter::operator[](unsigned int i)
   }
 }
 
-std::vector<double> SymmetricFirFilter::getGradient(double w)
+SymmetricFirFilterForcedDc::SymmetricFirFilterForcedDc(double dcGain, unsigned int N, const double* coeffs)
+  : FirFilter((unsigned int)floor((double)N/2), coeffs)
+  , m_dcGain(dcGain)
 {
-  std::vector<double> grad(m_rank, 0);
-
-  double temp = m_h[m_rank - 1];
-  for (int i = 1; i < m_rank; i++)
+  if ( (N & 0x1) == 0)
   {
-    temp += 2 * m_h[m_rank - 1 - i] * cos(w * i);
+    throw std::string("SymmetricFirFilterForcedDc not implemented for N even");
   }
-  temp = signum(temp);
-
-  grad[m_rank - 1] = -temp;
-  for(int i = 0; i < (m_rank - 1); i++)
-  {
-    grad[i] = temp * 2 * cos(w * (m_rank - 1 - i));
-  }
-
-  return grad;
+  m_order = N;
 }
+
+double& SymmetricFirFilterForcedDc::operator[](unsigned int i)
+{
+  if (i >= m_order)
+  {
+    throw std::string("index too large");
+  }
+
+  if (i < m_rank)
+  {
+    return m_h[i];
+  }
+  else if (i == m_rank)
+  {
+    m_tempForReturn = m_dcGain - 2 * std::accumulate(m_h.begin(), m_h.end(), 0.0);
+    return m_tempForReturn;
+  }
+  else
+  {
+    return m_h[m_order - i - 1];
+  }
+}
+

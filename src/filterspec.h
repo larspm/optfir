@@ -3,13 +3,7 @@
 
 #include <map>
 
-struct SampleSpec {
-  double gain;
-  double weight;
-  double maxDeviation;
-};
-
-typedef std::map<double, SampleSpec> SampleSpecMap;
+typedef std::map<double, double> SampleSpecMap;
 
 struct FilterSpec {
   unsigned int order;

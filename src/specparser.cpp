@@ -82,22 +82,12 @@ FilterSpec parseSpecFile(const char* filename)
       {
         if ((temp = xmlGetProp(nodeset->nodeTab[i], BAD_CAST "omega")) != NULL)
         {
-          SampleSpec& sample = spec.samples[atof((const char*)temp)];
+          double& sample = spec.samples[atof((const char*)temp)];
 
           temp = xmlGetProp(nodeset->nodeTab[i], BAD_CAST "gain");
           if (temp != NULL)
           {
-            sample.gain = atof((const char*)temp);
-          }
-          temp = xmlGetProp(nodeset->nodeTab[i], BAD_CAST "weight");
-          if (temp != NULL)
-          {
-            sample.weight = atof((const char*)temp);
-          }
-          temp = xmlGetProp(nodeset->nodeTab[i], BAD_CAST "max_deviation");
-          if (temp != NULL)
-          {
-            sample.maxDeviation = atof((const char*)temp);
+            sample = atof((const char*)temp);
           }
         }
       }

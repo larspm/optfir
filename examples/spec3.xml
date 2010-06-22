@@ -1,0 +1,23 @@
+<amplitudespec order="7" symmetric="yes" max_coeff_abs_value="1.0">
+  <sample omega="0.00000" gain="0.84140"/>
+  <sample omega="0.11636" gain="0.84723"/>
+  <sample omega="0.23271" gain="0.84625"/>
+  <sample omega="0.34907" gain="0.84528"/>
+  <sample omega="0.46542" gain="0.85212"/>
+  <sample omega="0.58178" gain="0.85605"/>
+  <sample omega="0.69813" gain="0.85901"/>
+  <sample omega="0.81449" gain="0.86000"/>
+  <sample omega="0.93084" gain="0.86896"/>
+  <sample omega="1.04720" gain="0.86896"/>
+  <sample omega="1.16355" gain="0.87902"/>
+  <sample omega="1.27991" gain="0.89433"/>
+  <sample omega="1.39626" gain="0.90261"/>
+  <sample omega="1.51262" gain="0.91833"/>
+  <sample omega="1.62897" gain="0.92576"/>
+  <sample omega="1.74533" gain="0.94733"/>
+  <sample omega="1.86168" gain="0.96605"/>
+  <sample omega="1.97804" gain="0.97836"/>
+  <sample omega="2.09440" gain="0.99885"/>
+  <sample omega="2.21075" gain="1.01042"/>
+</amplitudespec>
+

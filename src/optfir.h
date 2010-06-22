@@ -6,6 +6,6 @@
 class FirFilter;
 
 double L2Norm(const FilterSpec& x, FirFilter& y);
-bool   findClosestFilter(const FilterSpec spec, FirFilter& filter);
+bool   findClosestFilter(const FilterSpec spec, FirFilter& filter, bool forcedDc);
 
 #endif
