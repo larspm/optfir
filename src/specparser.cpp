@@ -72,7 +72,13 @@ FilterSpec parseSpecFile(const char* filename)
       spec.maxCoeffAbsValue = atof((const char*)temp);
     }
 
-		xmlXPathFreeObject(result);
+    temp = xmlGetProp(nodeset->nodeTab[0], BAD_CAST "max_gain");
+    if (temp != NULL)
+    {
+      spec.maxGain = atof((const char*)temp);
+    }
+
+    xmlXPathFreeObject(result);
 
     result = getNodeSet(doc, BAD_CAST "/amplitudespec/sample");
     if (result != NULL)

@@ -1,4 +1,4 @@
-<amplitudespec order="7" symmetric="yes" max_coeff_abs_value="1.0">
+<amplitudespec order="7" symmetric="yes" max_coeff_abs_value="1.0" max_gain="1.0">
   <sample omega="0.00000" gain="0.84140"/>
   <sample omega="0.11636" gain="0.85016"/>
   <sample omega="0.23271" gain="0.86099"/>

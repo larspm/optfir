@@ -23,10 +23,11 @@ int main(int argc, char* argv[])
   std::cerr << "order = " << spec.order << std::endl;
   std::cerr << "symmetric = " << (spec.symmetric?"yes":"no") << std::endl;
   std::cerr << "max_coeff = " << spec.maxCoeffAbsValue << std::endl;
+  std::cerr << "max_gain = " << spec.maxGain << std::endl;
 
   if(!spec.symmetric)
   {
-    std::cerr << "Error: only symmetric filters are implemented, quitting \n";
+    std::cerr << "Error: only symmetric filters are implemented, quitting\n";
     return 1;
   }
 
@@ -40,7 +41,7 @@ int main(int argc, char* argv[])
               << it->first
               << ") = "
               << it->second
-              << ")\n";
+              << std::endl;
   }
 
   FirFilter* filter = 0;
@@ -62,9 +63,10 @@ int main(int argc, char* argv[])
   {
       filter = new FirFilter(spec.order);
   }
-  bool result = findClosestFilter(spec, *filter, spec.samples.count(0.0) > 0);
+  std::string resultText;
+  bool result = findClosestFilter(spec, *filter, spec.samples.count(0.0) > 0, &resultText);
 
-  std::cerr << "\nResult(" << (result ? "ok" : "fail")  << "):\n\n";
+  std::cerr << "\nResult(" << (result ? "ok - " : "fail - ") << resultText << "):\n\n";
 
   std::cout << "N = " << spec.order << std::endl;
 
