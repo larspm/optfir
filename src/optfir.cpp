@@ -115,7 +115,8 @@ bool findClosestFilter(const FilterSpec spec, FirFilter& filter, bool forcedDc, 
     x[i]  = filter[i];
   }
 
-  opt.set_maxeval(1000);
+  opt.set_maxeval(5000);
+  opt.set_xtol_abs(1e-10);
 
   double minf;
   nlopt::result result = nlopt::SUCCESS;
@@ -125,7 +126,8 @@ bool findClosestFilter(const FilterSpec spec, FirFilter& filter, bool forcedDc, 
   }
   catch (std::runtime_error& e)
   {
-    std::cerr << e.what();
+    std::cerr << e.what() << std::endl;
+    result = nlopt::FAILURE;
   }
   catch (...)
   {
