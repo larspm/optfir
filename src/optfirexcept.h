@@ -4,10 +4,13 @@
 #include <string>
 #include <stdexcept>
 
-class OptfirException : public std::runtime_error
+namespace
 {
-public:
-  OptfirException(const std::string& what) : std::runtime_error(what) {}
-};
+  class OptfirException : public std::runtime_error
+  {
+  public:
+    OptfirException(const std::string& what) : std::runtime_error(what) {}
+  };
+}
 
 #endif

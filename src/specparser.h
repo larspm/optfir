@@ -13,6 +13,9 @@
 
 #include "filterspec.h"
 
-FilterSpec parseSpecFile(const char* filename);
+namespace optfir
+{
+  FilterSpec parseSpecFile(const char* filename);
+}
 
 #endif

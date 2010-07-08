@@ -6,6 +6,8 @@
 
 int main(int argc, char* argv[])
 {
+  using namespace optfir;
+
   if (argc != 2) {
     std::cerr << "Usage: " << argv[0] << " filename\n";
     return 1;
@@ -64,7 +66,7 @@ int main(int argc, char* argv[])
       filter = new FirFilter(spec.order);
   }
   std::string resultText;
-  bool result = findClosestFilter(spec, *filter, spec.samples.count(0.0) > 0, &resultText);
+  bool result = findClosestFilter(spec, *filter, spec.samples.count(0.0) > 0, false, &resultText);
 
   std::cerr << "\nResult(" << (result ? "ok - " : "fail - ") << resultText << "):\n\n";
 
