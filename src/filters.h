@@ -8,12 +8,13 @@ namespace optfir
   class FirFilter {
   public:
     FirFilter(unsigned int N, const double coeffs[] = 0);
-    unsigned int getOrder();
-    unsigned int getRank();
+    unsigned int getOrder() const;
+    unsigned int getRank() const;
     virtual double& operator[](unsigned int i);
+    const   double& operator[](unsigned int i) const;
     void operator=(const double* h);
     void operator=(const std::vector<double>& h);
-    double getAmplitudeResponse(double w);
+    double getAmplitudeResponse(double w) const;
   protected:
     unsigned int m_order;
     unsigned int m_rank;

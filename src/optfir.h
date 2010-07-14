@@ -7,7 +7,7 @@ namespace optfir
 {
   class FirFilter;
 
-  double L2Norm(const FilterSpec& x, FirFilter& y);
+  double L2Norm(const FilterSpec& x, const FirFilter& y);
   bool findClosestFilter(const FilterSpec spec, FirFilter& filter, bool forcedDc, bool optForRatio, std::string* resultText = 0);
 }
 

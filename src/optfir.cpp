@@ -10,7 +10,7 @@
 
 namespace optfir
 {
-  double L2Norm(const FilterSpec& x, FirFilter& y)
+  double L2Norm(const FilterSpec& x, const FirFilter& y)
   {
     double d(0);
 
@@ -24,7 +24,7 @@ namespace optfir
     return sqrt(d);
   }
 
-  double ratioDistance(const FilterSpec& x, FirFilter& y)
+  double ratioDistance(const FilterSpec& x, const FirFilter& y)
   {
     double d(0);
 
@@ -84,13 +84,13 @@ namespace optfir
   struct MaxGainConstraintData
   {
     const FilterSpec& spec;
-    FirFilter& filter;
+    const FirFilter& filter;
   };
 
   double constraint_max_gain(const std::vector<double>& x, std::vector<double>& grad, void *fc_data)
   {
-    const FilterSpec& spec = reinterpret_cast<MaxGainConstraintData*>(fc_data)->spec;
-    FirFilter& filter = reinterpret_cast<MaxGainConstraintData*>(fc_data)->filter;
+    const FilterSpec& spec = reinterpret_cast<const MaxGainConstraintData*>(fc_data)->spec;
+    const FirFilter& filter = reinterpret_cast<const MaxGainConstraintData*>(fc_data)->filter;
 
     double maxGain = 0.0;
     for (SampleSpecMap::const_iterator it = spec.samples.begin();

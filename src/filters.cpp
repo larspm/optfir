@@ -29,12 +29,12 @@ namespace optfir
     }
   }
 
-  unsigned int FirFilter::getOrder()
+  unsigned int FirFilter::getOrder() const
   {
     return m_order;
   }
 
-  unsigned int FirFilter::getRank()
+  unsigned int FirFilter::getRank() const
   {
     return m_rank;
   }
@@ -47,6 +47,13 @@ namespace optfir
     }
 
     return m_h[i];
+  }
+
+  const double& FirFilter::operator[](unsigned int i) const
+  {
+    // Cast to mutable so we get the correct operator,
+    // which is ok since we return const reference.
+    return const_cast<FirFilter*>(this)->operator[](i);
   }
 
   void FirFilter::operator=(const double* h)
@@ -66,7 +73,7 @@ namespace optfir
     m_h = h;
   }
 
-  double FirFilter::getAmplitudeResponse(double w)
+  double FirFilter::getAmplitudeResponse(double w) const
   {
     std::complex<double> res(0);
 
