@@ -107,11 +107,8 @@ int main(int argc, char* argv[])
   std::cout << "]'" << std::endl;
 
   std::cout <<
-  "A = [];\n"
-  "for j = 1:((N + 1) / 2 - 1 )\n"
-  "  A = [A 2*cos( ((N+1)/2 -j ) * w)];\n"
-  "endfor\n"
-  "A = [A ones(length(w), 1)];\n"
+  "j = 1:((N + 1) / 2 - 1 );\n"
+  "A = [2 * cos(w * ((N + 1) / 2 - j)) ones(size(w))];\n"
   "h_pls = inv(A' * A) * A' * H_opt\n";
 
   delete filter;
